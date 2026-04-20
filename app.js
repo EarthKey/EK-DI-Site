@@ -396,7 +396,6 @@ const categories = [
 ];
 
 const categoryGrid = document.getElementById("categoryGrid");
-const searchInput = document.getElementById("searchInput");
 const categoryFilters = document.getElementById("categoryFilters");
 const emptyState = document.getElementById("emptyState");
 const situationCards = document.querySelectorAll(".situation-card");
@@ -453,7 +452,6 @@ function createFilters() {
 
 function activateSituation(targetId) {
   currentFilter = targetId;
-  searchInput.value = "";
   syncActiveFilterButton();
   applyFilters();
 
@@ -530,7 +528,6 @@ function renderCategories() {
 }
 
 function applyFilters() {
-  const keyword = searchInput.value.trim().toLowerCase();
   let visibleCards = 0;
 
   document.querySelectorAll(".section-card").forEach((section) => {
@@ -538,8 +535,7 @@ function applyFilters() {
     let sectionVisibleCards = 0;
 
     section.querySelectorAll(".site-card").forEach((card) => {
-      const matchesKeyword = !keyword || card.dataset.search.includes(keyword);
-      const show = matchesCategory && matchesKeyword;
+      const show = matchesCategory;
       card.classList.toggle("hidden", !show);
       if (show) {
         sectionVisibleCards += 1;
@@ -554,8 +550,7 @@ function applyFilters() {
   emptyState.style.display = visibleCards === 0 ? "block" : "none";
 }
 
-if (categoryGrid && searchInput && categoryFilters && emptyState) {
-  searchInput.addEventListener("input", applyFilters);
+if (categoryGrid && categoryFilters && emptyState) {
   createFilters();
   renderCategories();
   applyFilters();
