@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DI Site Navigator | 薬剤師・医療従事者向け実務インデックス</title>
+  <style>
+    :root {
+      --bg: #f0fdf4;
+      --bg-soft: #ecfdf5;
+      --surface: rgba(255, 255, 255, 0.84);
+      --surface-strong: rgba(255, 255, 255, 0.95);
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: rgba(209, 250, 229, 0.72);
+      --accent: #10b981;
+      --accent-2: #0ea5e9;
+      --accent-3: #065f46;
+      --safe: #16a34a;
+      --warn: #0f766e;
+      --shadow: 0 22px 60px rgba(6, 78, 59, 0.18);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --max: 1360px;
+      --font-sans: "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+      --font-serif: "Hiragino Mincho ProN", "Yu Mincho", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: var(--font-sans);
+      background: radial-gradient(circle at top, #d1fae5 0, #064e3b 60%, #022c22 100%);
+      line-height: 1.75;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      width: min(var(--max), calc(100vw - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(18px);
+      background: rgba(255, 255, 255, 0.82);
+      border-bottom: 1px solid #d1fae5;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: white;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 12px 32px rgba(16, 185, 129, 0.28);
+    }
+
+    .brand-copy h1 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+    }
+
+    .brand-copy p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .mini-link {
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.76);
+      font-size: 0.9rem;
+      color: var(--muted);
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .mini-link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(16, 185, 129, 0.35);
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .hero {
+      padding: 44px 0 28px;
+    }
+
+    .hero-wrap {
+      display: block;
+    }
+
+    .hero-main,
+    .panel,
+    .section-card,
+    .site-card,
+    .flow-card,
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+    }
+
+    .hero-main {
+      padding: 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      inset: auto -30px -40px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.22), transparent 72%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      color: var(--accent-3);
+      background: rgba(209, 250, 229, 0.78);
+      margin-bottom: 16px;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(2rem, 3.8vw, 4rem);
+      line-height: 1.12;
+      font-family: var(--font-serif);
+      letter-spacing: 0.03em;
+    }
+
+    .hero-lead {
+      margin: 18px 0 0;
+      max-width: 48rem;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .hero-note {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(236, 253, 245, 0.82), rgba(224, 242, 254, 0.72));
+      color: #065f46;
+      border: 1px solid rgba(16, 185, 129, 0.18);
+    }
+
+    .hero-meta {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .metric {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.6rem;
+      color: var(--accent-3);
+      margin-bottom: 6px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .hero-side h3,
+    .section-head h3,
+    .panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.18rem;
+    }
+
+    .hero-side p,
+    .section-head p,
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      padding: 10px 0 26px;
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1.1fr auto;
+      gap: 16px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 18px;
+      padding: 17px 18px 17px 52px;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      color: white;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-color: transparent;
+      box-shadow: 0 12px 24px rgba(16, 185, 129, 0.22);
+    }
+
+    .situation {
+      padding: 16px 0 8px;
+    }
+
+    .section-head {
+      margin-bottom: 18px;
+    }
+
+    .situation-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .situation-card {
+      display: block;
+      padding: 22px;
+      min-height: 210px;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      color: white;
+      transform: translateY(0);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .situation-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 70px rgba(19, 41, 46, 0.18);
+    }
+
+    .situation-card::after {
+      content: "";
+      position: absolute;
+      right: -20px;
+      bottom: -20px;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .s1 { background: linear-gradient(145deg, #064e3b, #065f46); }
+    .s2 { background: linear-gradient(145deg, #059669, #10b981); }
+    .s3 { background: linear-gradient(145deg, #065f46, #0f766e); }
+    .s4 { background: linear-gradient(145deg, #166534, #16a34a); }
+    .s5 { background: linear-gradient(145deg, #115e59, #0ea5a0); }
+    .s6 { background: linear-gradient(145deg, #0369a1, #0ea5e9); }
+    .s7 { background: linear-gradient(145deg, #047857, #34d399); }
+    .s8 { background: linear-gradient(145deg, #065f46, #0284c7); }
+
+    .situation-card small {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+    }
+
+    .situation-card h4 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+      line-height: 1.4;
+    }
+
+    .situation-card p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 0.92rem;
+    }
+
+    .flow {
+      padding: 24px 0 10px;
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .flow-card {
+      padding: 24px;
+    }
+
+    .flow-card .step {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      color: white;
+      font-weight: 700;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      margin-bottom: 14px;
+    }
+
+    .flow-card h4 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+    }
+
+    .flow-card ol {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .flow-card li + li {
+      margin-top: 8px;
+    }
+
+    .map {
+      padding: 24px 0 80px;
+    }
+
+    .category-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .section-card {
+      padding: 24px;
+    }
+
+    .section-card.hidden {
+      display: none;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 1.28rem;
+    }
+
+    .section-title p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+
+    .section-badge {
+      flex: 0 0 auto;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(209, 250, 229, 0.92);
+      color: var(--accent-3);
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .sites-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .site-card {
+      padding: 18px;
+      border-radius: 22px;
+      box-shadow: none;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .site-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(16, 185, 129, 0.28);
+      background: var(--surface-strong);
+    }
+
+    .site-card.hidden {
+      display: none;
+    }
+
+    .site-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .site-title {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .site-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-3);
+      font-weight: 700;
+    }
+
+    .site-link::after {
+      content: "↗";
+      font-size: 0.92rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(236, 253, 245, 0.92);
+      color: var(--accent-3);
+      font-size: 0.76rem;
+      letter-spacing: 0.03em;
+    }
+
+    .site-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .summary {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .summary-card {
+      padding: 20px;
+      box-shadow: none;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent-3);
+      font-size: 1rem;
+    }
+
+    .summary-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .footer {
+      padding: 0 0 56px;
+    }
+
+    .footer-card {
+      padding: 28px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 52%, #047857 100%);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .footer-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.24rem;
+    }
+
+    .footer-card p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.84);
+    }
+
+    .source-credit {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(209, 250, 229, 0.18);
+      font-size: 0.84rem;
+      line-height: 1.8;
+      color: rgba(236, 253, 245, 0.76);
+    }
+
+    .source-credit a {
+      color: #a7f3d0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .source-credit a:hover {
+      color: #d1fae5;
+    }
+
+    .highlight {
+      color: #0ea5e9;
+      font-weight: 700;
+    }
+
+    .empty-state {
+      display: none;
+      margin-top: 18px;
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(236, 253, 245, 0.16);
+      border: 1px solid rgba(209, 250, 229, 0.24);
+      color: #ecfdf5;
+    }
+
+    @media (max-width: 1180px) {
+    .controls,
+      .summary,
+      .situation-grid,
+      .flow-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sites-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-group {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        width: min(var(--max), calc(100vw - 20px));
+      }
+
+      .topbar-inner,
+      .brand {
+        align-items: flex-start;
+      }
+
+      .topbar-inner {
+        flex-direction: column;
+      }
+
+      .hero-main,
+      .panel,
+      .section-card,
+      .footer-card {
+        padding: 20px;
+      }
+
+      .section-title {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">DI</div>
+        <div class="brand-copy">
+          <h1>DI Site Navigator</h1>
+          <p>薬剤師・医療従事者向け 実務インデックス</p>
+        </div>
+      </div>
+      <nav class="top-actions" aria-label="ページ内ナビゲーション">
+        <a class="mini-link" href="#situation">状況ナビ</a>
+        <a class="mini-link" href="#flow">使う順番</a>
+        <a class="mini-link" href="#map">カテゴリ一覧</a>
+        <a class="mini-link" href="#footer">設計メモ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-wrap">
+        <div class="hero-main">
+          <h2 id="hero-title">迷った瞬間に、<br>最短で正しい情報へ。</h2>
+          <p class="hero-lead">
+            薬剤師・医療従事者が、<span class="highlight">必要な情報を状況別にすぐ探せる</span>ように整理した、
+            実務用の医療系Webサイト案内です。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-labelledby="toolbar-title">
+      <div class="panel">
+        <div class="section-head">
+          <h3 id="toolbar-title">検索と絞り込み</h3>
+          <p>サイト名、活用シーン、カテゴリ、タグで横断検索できます。時間を無駄にしないための入口です。</p>
+        </div>
+        <div class="controls">
+          <div class="search-box">
+            <span class="search-icon">⌕</span>
+            <input id="searchInput" type="search" placeholder="例：添付文書 / 授乳 / 供給 / PMDA / 腎機能">
+          </div>
+          <div class="filter-group" id="categoryFilters" aria-label="カテゴリ絞り込み"></div>
+        </div>
+        <div class="empty-state" id="emptyState">
+          一致するサイトが見つかりませんでした。検索語を減らすか、カテゴリ絞り込みを解除してください。
+        </div>
+      </div>
+    </section>
+
+    <section class="situation" id="situation" aria-labelledby="situation-title">
+      <div class="section-head">
+        <h3 id="situation-title">状況ナビ</h3>
+        <p>現場では「公的機関を見よう」とは考えません。「今すぐ添付文書が必要」「授乳で困る」と考えます。入口をそこに合わせています。</p>
+      </div>
+      <div class="situation-grid">
+        <a class="situation-card s1" href="#cat-primary">
+          <small>一次情報</small>
+          <h4>まず原典を押さえたい</h4>
+          <p>制度・通知・添付文書・安全性情報の起点に戻る導線です。</p>
+        </a>
+        <a class="situation-card s2" href="#cat-drug-info">
+          <small>日常DI</small>
+          <h4>添付文書や製品情報を今すぐ見たい</h4>
+          <p>PMDA、くすりのしおり、RMPなど、日々の確認に直結します。</p>
+        </a>
+        <a class="situation-card s3" href="#cat-dosing">
+          <small>判断支援</small>
+          <h4>腎機能・肝機能・周術期で迷っている</h4>
+          <p>「用量」「禁忌」「休薬」の順で確認すべき資料へつなぎます。</p>
+        </a>
+        <a class="situation-card s4" href="#cat-safety">
+          <small>供給と安全</small>
+          <h4>供給不安や副作用情報を追いたい</h4>
+          <p>限定出荷、回収、使用上の注意改訂の確認に向いています。</p>
+        </a>
+        <a class="situation-card s5" href="#cat-special">
+          <small>特殊ケース</small>
+          <h4>授乳・ドーピング・麻薬廃棄で困る</h4>
+          <p>事故や説明不備につながりやすい場面をまとめています。</p>
+        </a>
+        <a class="situation-card s6" href="#cat-evidence">
+          <small>深掘り</small>
+          <h4>論文やガイドラインまで掘り下げたい</h4>
+          <p>全体像から原著まで、深さに応じた調べ方を想定しています。</p>
+        </a>
+        <a class="situation-card s7" href="#cat-learning">
+          <small>学び</small>
+          <h4>研修・認定・日々のインプットを積みたい</h4>
+          <p>単位、認定、実務学習、現場ブログまで整理しています。</p>
+        </a>
+        <a class="situation-card s8" href="#cat-patient">
+          <small>患者向け</small>
+          <h4>患者さんに案内しやすい資料を探したい</h4>
+          <p>説明後のセルフフォロー先として使いやすいサイトを厳選しています。</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="flow" id="flow" aria-labelledby="flow-title">
+      <div class="section-head">
+        <h3 id="flow-title">使う順番の図解</h3>
+        <p>本当に使われるサイトは、リンクを並べるのではなく「この場面ではまずこれ」を示しています。</p>
+      </div>
+      <div class="flow-grid">
+        <article class="flow-card">
+          <div class="step">1</div>
+          <h4>腎機能・肝機能で迷うとき</h4>
+          <ol>
+            <li>実務一覧で即確認する</li>
+            <li>添付文書で適応・用量・禁忌を押さえる</li>
+            <li>必要なら学会ガイドラインで補強する</li>
+          </ol>
+        </article>
+        <article class="flow-card">
+          <div class="step">2</div>
+          <h4>副作用・安全性を追うとき</h4>
+          <ol>
+            <li>厚労省の安全性情報を確認する</li>
+            <li>PMDAで関連資材やRMPを見る</li>
+            <li>患者説明や院内共有に落とし込む</li>
+          </ol>
+        </article>
+        <article class="flow-card">
+          <div class="step">3</div>
+          <h4>深掘りするとき</h4>
+          <ol>
+            <li>MindsやMSDで全体像を掴む</li>
+            <li>PubMedやCochraneで根拠を見る</li>
+            <li>一次情報に戻して実務判断へつなげる</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section class="map" id="map" aria-labelledby="map-title">
+      <div class="section-head">
+        <h3 id="map-title">カテゴリ一覧</h3>
+        <p>以下は「組織別」ではなく「現場で何に使うか」で再構成した一覧です。検索・絞り込みにも対応しています。</p>
+      </div>
+      <div class="category-grid" id="categoryGrid"></div>
+      <div class="summary" aria-label="使い方の要約">
+        <div class="summary-card">
+          <strong>最初の原則</strong>
+          <p>迷ったら一次情報。便利さだけでブログに逃げると精度が落ちます。</p>
+        </div>
+        <div class="summary-card">
+          <strong>時間短縮</strong>
+          <p>調べる前に「今の困りごと」を言語化すると、見るべきサイトが絞れます。</p>
+        </div>
+        <div class="summary-card">
+          <strong>事故予防</strong>
+          <p>供給・安全性・授乳・麻薬は、曖昧な理解のまま進めると現場で痛い目を見ます。</p>
+        </div>
+        <div class="summary-card">
+          <strong>学び方</strong>
+          <p>全体像をつかむ資料と、最終判断の根拠資料は分けて使うのが合理的です。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer shell" id="footer">
+    <div class="footer-card">
+      <h3>設計思想</h3>
+      <p>
+        このページの本質は「情報整理」ではなく、
+        <strong>忙しい現場の人が、迷った瞬間に、最短で正しい情報へ辿り着けること</strong>です。
+        だからこそ、網羅性だけで満足せず、状況ナビ、優先導線、使う順番、一次情報への回帰を前面に出しています。
+      </p>
+      <div class="source-credit">
+        <div>本サイトは、ふみやさんのX投稿を参考に、現場で使いやすい実務向けの形に情報を再構成しています。</div>
+        <div>参考URL: <a href="https://x.com/fmyaku1015/status/2045698041336983858?s=20" target="_blank" rel="noopener noreferrer">https://x.com/fmyaku1015/status/2045698041336983858?s=20</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const categories = [
+      {
+        id: "cat-primary",
+        key: "一次情報",
+        title: "まず最初に当たる一次情報",
+        description: "制度、通知、安全性、添付文書の原典を押さえるための土台です。",
+        items: [
+          {
+            name: "厚生労働省",
+            url: "https://www.mhlw.go.jp/",
+            use: "制度改正、通知、行政方針、薬事・保険関連の原典確認に使います。SNSや二次記事より先にここを見る癖があるかで精度が変わります。",
+            tags: ["行政", "制度", "一次情報"]
+          },
+          {
+            name: "PMDA（医薬品医療機器総合機構）",
+            url: "https://www.pmda.go.jp/",
+            use: "添付文書、安全性情報、RMP、回収情報など医薬品DIの土台になる一次情報源です。迷ったらまずPMDAです。",
+            tags: ["PMDA", "添付文書", "安全性"]
+          },
+          {
+            name: "医薬品副作用被害救済制度（PMDA）",
+            url: "https://www.pmda.go.jp/relief-services/adr-sufferers/0001.html",
+            use: "重篤な副作用が疑われ、患者説明や制度案内が必要なときに確認します。説明責任を曖昧にしないための導線です。",
+            tags: ["副作用", "制度", "患者対応"]
+          },
+          {
+            name: "国民健康保険中央会",
+            url: "https://www.kokuho.or.jp/",
+            use: "国保関連制度や審査支払の全体像を確認したいときに参照します。制度理解の背景整理に役立ちます。",
+            tags: ["保険", "制度", "国保"]
+          },
+          {
+            name: "社会保険診療報酬支払基金",
+            url: "https://www.ssk.or.jp/",
+            use: "レセプト審査、オンライン資格確認、医療保険運用まわりの確認に使います。請求実務の解像度を上げたいときに有用です。",
+            tags: ["保険", "請求", "支払基金"]
+          }
+        ]
+      },
+      {
+        id: "cat-drug-info",
+        key: "添付文書",
+        title: "添付文書・製品情報をすぐ確認したい",
+        description: "日常DIの中心です。まずここが軽く引ける状態にしておくべきです。",
+        items: [
+          {
+            name: "医療用医薬品 添付文書等情報検索（PMDA）",
+            url: "https://www.pmda.go.jp/PmdaSearch/iyakuSearch/",
+            use: "添付文書、患者向医薬品ガイド、インタビューフォーム周辺情報を最速で引きたいときに使います。日常DIの起点です。",
+            tags: ["PMDA", "添付文書", "日常DI"]
+          },
+          {
+            name: "一般用医薬品・要指導医薬品 情報検索（PMDA）",
+            url: "https://www.pmda.go.jp/PmdaSearch/otcSearch/",
+            use: "OTCの添付文書や使用者向ガイドを確認したいときに使います。セルフメディケーション相談時の根拠固めに便利です。",
+            tags: ["OTC", "添付文書", "セルフメディケーション"]
+          },
+          {
+            name: "PMDAおくすりサーチ",
+            url: "https://www.pmda.go.jp/okusuri_search/",
+            use: "患者さん自身にも案内しやすい一般向け検索です。服用中の薬の概要や副作用注意点を共有したいときに役立ちます。",
+            tags: ["患者向け", "PMDA", "薬検索"]
+          },
+          {
+            name: "くすりのしおり",
+            url: "https://www.rad-ar.or.jp/siori/",
+            use: "患者説明用に、薬の効能・飲み方・注意点を平易な表現で確認したいときに使います。服薬指導の言い換え素材として優秀です。",
+            tags: ["患者説明", "服薬指導", "薬検索"]
+          },
+          {
+            name: "RMP提出品目一覧（PMDA）",
+            url: "https://www.pmda.go.jp/safety/info-services/drugs/items-information/rmp/0001.html",
+            use: "追加の安全対策が必要な薬か、どんな安全性懸念が重視されているかを確認したいときに使います。新薬や注意薬の理解が深まります。",
+            tags: ["RMP", "安全性", "新薬"]
+          },
+          {
+            name: "「健康食品」の安全性・有効性情報",
+            url: "https://hfnet.nibiohn.go.jp/",
+            use: "サプリや健康食品の相談対応で、感覚ではなく根拠で返したいときに使います。相互作用や有効性の見極めに有用です。",
+            tags: ["健康食品", "サプリ", "相互作用"]
+          },
+          {
+            name: "効能効果、用法用量等に違いのある後発医薬品リスト",
+            url: "https://www.jga.gr.jp/medical/confirm-effective.html",
+            use: "先発から後発への切替時に、適応や用法の違いがないか確認したいときに使います。同じ成分だから同じ、という雑な判断を防ぎます。",
+            tags: ["後発品", "切替", "適応"]
+          },
+          {
+            name: "化粧品成分オンライン",
+            url: "https://cosmetic-ingredients.org/",
+            use: "化粧品成分や皮膚刺激性の相談に対応したいときに便利です。OTCやスキンケア相談の補助線として使えます。",
+            tags: ["化粧品", "成分", "皮膚"]
+          }
+        ]
+      },
+      {
+        id: "cat-dosing",
+        key: "用量調整",
+        title: "用量調整・禁忌判断で迷ったとき",
+        description: "腎機能、肝機能、周術期は事故につながりやすいので、見る順番ごと設計しています。",
+        items: [
+          {
+            name: "日本腎臓学会 診療ガイドライン",
+            url: "https://jsn.or.jp/medic/guideline/index.php",
+            use: "CKDや腎疾患の標準治療・評価の考え方を確認したいときに使います。用量調整の背景理解まで押さえたいとき向けです。",
+            tags: ["腎機能", "ガイドライン", "CKD"]
+          },
+          {
+            name: "腎機能低下時に最も注意が必要な薬剤投与量一覧",
+            url: "https://jsnp.org/dosage_recommendations/",
+            use: "腎機能低下時の投与量を手早く確認したいときの実務ツールです。添付文書だけでは遅い場面で特に強いです。",
+            tags: ["腎機能", "投与量", "一覧"]
+          },
+          {
+            name: "日本肝臓学会ガイドライン",
+            url: "https://www.jsh.or.jp/medical/guidelines/jsh_guidlines/",
+            use: "肝硬変、肝炎、肝癌など肝疾患の標準治療や考え方を確認したいときに使います。肝機能障害時の薬物治療判断の土台になります。",
+            tags: ["肝機能", "ガイドライン", "肝疾患"]
+          },
+          {
+            name: "重篤な肝機能障害時に禁忌となる薬剤について",
+            url: "https://municipal-hospital.ichinomiya.aichi.jp/medical/druginformation_backnumber.html",
+            use: "肝障害患者で、この薬を本当に入れていいかを急ぎで見たいときに便利です。院内DI資料ですが、現場感のある整理がされています。",
+            tags: ["肝機能", "禁忌", "院内DI"]
+          },
+          {
+            name: "術前中止薬管理Webアプリ案内",
+            url: "https://yakuzai.med.saga-u.ac.jp/info/pharmacy/",
+            use: "周術期の休薬確認で迷ったときに参照します。抗血栓薬や糖尿病薬など、事故につながりやすい領域の確認に有用です。",
+            tags: ["術前", "休薬", "周術期"]
+          }
+        ]
+      },
+      {
+        id: "cat-safety",
+        key: "安全性",
+        title: "供給・安全性・回収情報を追いたい",
+        description: "供給不安と安全性改訂は、知らなかったでは済まない領域です。",
+        items: [
+          {
+            name: "医薬品・医療機器等安全性情報（厚生労働省）",
+            url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/iyaku/index.html",
+            use: "重要な副作用、使用上の注意改訂、最新の安全対策を追いたいときに使います。定点観測していないと現場感覚が古くなります。",
+            tags: ["安全性", "副作用", "改訂"]
+          },
+          {
+            name: "医薬品等回収関連情報（厚生労働省）",
+            url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/kaisyu/index.html",
+            use: "自主回収や回収クラス分類を確認したいときに使います。問い合わせ対応や在庫確認時の判断材料になります。",
+            tags: ["回収", "安全性", "在庫"]
+          },
+          {
+            name: "DSJP（医療用医薬品供給状況データベース）",
+            url: "https://drugshortage.jp/",
+            use: "限定出荷、供給停止、代替候補検討の前提情報を素早く確認したいときに使います。供給不安の時代に外せません。",
+            tags: ["供給", "限定出荷", "代替薬"]
+          },
+          {
+            name: "CloseDi 供給状況検索",
+            url: "https://closedi.jp/medical_supply/",
+            use: "供給状況や経過措置期限、選定療養対象まで一気に見たいときに便利です。実務寄りで検索導線が軽いのが強みです。",
+            tags: ["供給", "経過措置", "選定療養"]
+          }
+        ]
+      },
+      {
+        id: "cat-special",
+        key: "特殊ケース",
+        title: "特殊ケースを確認したい",
+        description: "授乳、ドーピング、院外注射、麻薬廃棄は、曖昧な理解のまま進めると危険です。",
+        items: [
+          {
+            name: "授乳中の薬の使用について",
+            url: "https://www.ncchd.go.jp/kusuri/news_med/druglist.html",
+            use: "授乳中の処方可否や代替の検討で迷ったときに使います。国内の患者相談実績も踏まえた実践的な情報源です。",
+            tags: ["授乳", "妊娠", "患者対応"]
+          },
+          {
+            name: "LactMed（Drugs and Lactation Database）",
+            url: "https://www.ncbi.nlm.nih.gov/sites/books/NBK501922/",
+            use: "授乳中の薬剤移行や乳児影響をより深く調べたいときに使います。英語ですが、一次文献ベースで詳細確認したいときに強いです。",
+            tags: ["授乳", "英語", "文献"]
+          },
+          {
+            name: "Global DRO",
+            url: "https://www.globaldro.com/JP/search/input?pls=true",
+            use: "アスリートや競技者の服薬がドーピング規則に抵触しないかを確認したいときに使います。成分検索の習慣が重要です。",
+            tags: ["ドーピング", "スポーツ", "成分検索"]
+          },
+          {
+            name: "スポーツファーマシスト検索",
+            url: "http://www3.playtruejapan.org/sports-pharmacist/search.php",
+            use: "専門的なアンチ・ドーピング相談先を探したいときに使います。自分だけで曖昧に判断しないための逃げ道です。",
+            tags: ["ドーピング", "相談先", "薬剤師"]
+          },
+          {
+            name: "院外処方箋に記載可能な注射薬（CloseDi）",
+            url: "https://closedi.jp/medical_supply/#j_chushayaku",
+            use: "在宅や院外処方で注射薬の扱いが可能か確認したいときに使います。制度の理解が甘いとそのまま返戻や混乱に直結します。",
+            tags: ["在宅", "注射薬", "制度"]
+          },
+          {
+            name: "医療用麻薬廃棄方法推奨例一覧",
+            url: "https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/sonota/toriatsukai/haiki",
+            use: "調剤済麻薬や使用済み製剤の廃棄方法を確認したいときに使います。法律、環境、実務の3つを雑に扱わないための資料です。",
+            tags: ["麻薬", "廃棄", "法令"]
+          }
+        ]
+      },
+      {
+        id: "cat-evidence",
+        key: "深掘り",
+        title: "論文・ガイドラインを深く調べたい",
+        description: "全体像と最終根拠を分けて使うと、調査の速度と精度が両立します。",
+        items: [
+          {
+            name: "PubMed",
+            url: "https://pubmed.ncbi.nlm.nih.gov/",
+            use: "原著論文やレビューを幅広く検索したいときに使います。深掘りしたいなら、まとめ記事ではなくここに戻るべきです。",
+            tags: ["論文", "原著", "文献検索"]
+          },
+          {
+            name: "Cochrane Library",
+            url: "https://www.cochranelibrary.com/cdsr/reviews",
+            use: "エビデンスの質が高いシステマティックレビューを確認したいときに使います。治療介入の全体像把握に向いています。",
+            tags: ["レビュー", "エビデンス", "Cochrane"]
+          },
+          {
+            name: "MSDマニュアル プロフェッショナル版",
+            url: "https://www.msdmanuals.com/ja-jp/professional",
+            use: "疾患概説、診断、治療の全体像を短時間で整理したいときに便利です。まず全体像を掴んでから論文に入ると速いです。",
+            tags: ["疾患概説", "総論", "診断"]
+          },
+          {
+            name: "Minds ガイドラインライブラリ",
+            url: "https://minds.jcqhc.or.jp/",
+            use: "日本語の診療ガイドラインを横断的に探したいときに使います。ガイドライン検索の入口として非常に実務的です。",
+            tags: ["ガイドライン", "日本語", "横断検索"]
+          }
+        ]
+      },
+      {
+        id: "cat-learning",
+        key: "学び",
+        title: "研修・認定・学びを積み上げたい",
+        description: "単位、認定、日々の学習、現場の知恵までを一つの面で整理しています。",
+        items: [
+          {
+            name: "日本薬剤師研修センター",
+            url: "https://www.jpec.or.jp/",
+            use: "認定制度、研修会、更新要件の確認に使います。単位管理を後回しにする人ほど後で詰みます。",
+            tags: ["研修", "認定", "単位"]
+          },
+          {
+            name: "薬剤師認定制度認証機構（CPC）",
+            url: "https://www.cpc-j.org/",
+            use: "認証された認定制度の全体像を確認したいときに使います。制度の信頼性を見極める入口になります。",
+            tags: ["認定", "制度", "CPC"]
+          },
+          {
+            name: "PECS（薬剤師研修・認定電子システム）",
+            url: "https://www.jpec.or.jp/sien/system/index.html",
+            use: "研修履歴や認定申請を電子的に管理したいときに使います。登録を後回しにすると単位反映で詰まります。",
+            tags: ["PECS", "研修", "申請"]
+          },
+          {
+            name: "ためとこ",
+            url: "https://info.tametoko.jp/",
+            use: "忙しい中でも短時間で単位取得や学習継続をしたいときに使います。習慣化しやすい設計が強みです。",
+            tags: ["e-learning", "単位", "継続学習"]
+          },
+          {
+            name: "ためとこ「今日の治療薬書籍付き40単位パック」",
+            url: "https://info.tametoko.jp/plan/",
+            use: "新規取得や更新をまとめて進めたいときに候補になります。費用対効果を見て一気に単位を積みたい人向けです。",
+            tags: ["PR", "単位", "プラン"]
+          },
+          {
+            name: "Close Drug Information Room（CloseDi）",
+            url: "https://closedi.jp/",
+            use: "実務で刺さるDI記事や検索ツールを横断的に使いたいときに便利です。現場のそれ知りたかったに強いサイトです。",
+            tags: ["実務", "DI", "検索ツール"]
+          },
+          {
+            name: "ヤクメド",
+            url: "https://yakumed.jp/welcome",
+            use: "薬剤師同士の事例共有やQ&Aを見たいときに使います。公式一次情報ではないので、鵜呑みではなく補助線として使うのが前提です。",
+            tags: ["コミュニティ", "事例", "Q&A"]
+          },
+          {
+            name: "日経DI",
+            url: "https://medical.nikkeibp.co.jp/inc/all/hotnews/archives/di/",
+            use: "医薬品情報や制度改正、現場論点を効率よく追いたいときに使います。速報性と読みやすさが高い反面、最終確認は一次情報に戻すべきです。",
+            tags: ["ニュース", "医薬品情報", "制度改正"]
+          },
+          {
+            name: "JADEC eラーニング",
+            url: "https://www.nittokyo.or.jp/modules/doctor/index.php?content_id=41",
+            use: "糖尿病診療・療養支援の学び直しをしたいときに使います。専門外でも体系的に学べるのが利点です。",
+            tags: ["糖尿病", "e-learning", "療養指導"]
+          }
+        ]
+      },
+      {
+        id: "cat-operations",
+        key: "薬局運営",
+        title: "薬局運営・制度対応を効率化したい",
+        description: "管理薬剤師業務や制度報告は、後回しにすると雪だるま式に重くなります。",
+        items: [
+          {
+            name: "薬局機能情報提供制度について",
+            url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/kinoujouhou/index.html",
+            use: "薬局機能情報の制度理解や報告・公開の全体像を確認したいときに使います。制度対応を感覚でやると抜けます。",
+            tags: ["薬局機能情報", "制度", "報告"]
+          },
+          {
+            name: "薬局ヒヤリ・ハット事例収集・分析事業",
+            url: "https://www.yakkyoku-hiyari.jcqhc.or.jp/",
+            use: "他施設のヒヤリ・ハットから事故予防を学びたいときに使います。自分の現場だけ見ていると同じ失敗を繰り返します。",
+            tags: ["医療安全", "ヒヤリハット", "事故予防"]
+          },
+          {
+            name: "管理薬剤師.com",
+            url: "https://kanri.nkdesk.com/",
+            use: "管理薬剤師業務、法令、報酬改定、実務論点を横断的に確認したいときに使います。整理量は多いですが、最終確認は公的資料が前提です。",
+            tags: ["管理薬剤師", "法令", "報酬改定"]
+          },
+          {
+            name: "選定療養計算ツール（CloseDi）",
+            url: "https://closedi.jp/medical_supply/#j_senteiryouyou",
+            use: "長期収載品の選定療養に伴う増加額の計算や説明準備に使います。制度を理解せずに説明すると患者対応で崩れます。",
+            tags: ["選定療養", "計算", "患者説明"]
+          }
+        ]
+      },
+      {
+        id: "cat-association",
+        key: "薬剤師会",
+        title: "薬剤師会・地域連携の入口",
+        description: "全国と地域の両方を押さえて初めて現場の動きが見えます。",
+        items: [
+          {
+            name: "日本薬剤師会",
+            url: "https://www.nichiyaku.or.jp/",
+            use: "薬剤師会の通知、研修、職能関連情報を追いたいときに使います。地域活動や職能の流れを押さえる入口です。",
+            tags: ["薬剤師会", "職能", "全国"]
+          },
+          {
+            name: "奈良県薬剤師会",
+            url: "https://www.narayaku.or.jp/",
+            use: "奈良県内の研修、地域連携、行政周辺情報を確認したいときに使います。地域実務は全国情報だけでは足りません。",
+            tags: ["奈良", "地域連携", "研修"]
+          }
+        ]
+      },
+      {
+        id: "cat-blogs",
+        key: "実務ブログ",
+        title: "現場感のある学び・実務ブログ",
+        description: "ここは便利ですが、着地先ではありません。一次情報へ戻る補助線として使うべきです。",
+        items: [
+          {
+            name: "Fizz-DI（お薬Q&A 〜Fizz Drug Information〜）",
+            url: "https://www.fizz-di.jp/",
+            use: "薬の違いや使い分けを、文献ベースでわかりやすく整理した記事を読みたいときに使います。患者説明の言語化にも役立ちます。",
+            tags: ["比較", "患者説明", "文献ベース"]
+          },
+          {
+            name: "薬剤師の脳みそ",
+            url: "https://yakuzaishi.love/",
+            use: "新薬、販売中止、実務論点を現場目線で追いたいときに使います。速報性は高いですが、必ず一次情報で裏を取る前提です。",
+            tags: ["新薬", "販売中止", "現場目線"]
+          }
+        ]
+      },
+      {
+        id: "cat-patient",
+        key: "患者向け",
+        title: "患者さんに案内しやすいサイト",
+        description: "説明したあとに患者さんが自分で確認できる逃げ道を用意しておくと、指導の質が上がります。",
+        items: [
+          {
+            name: "おくすりサーチ（PMDA）",
+            url: "https://www.pmda.go.jp/okusuri_search/",
+            use: "患者さんが自分の薬を自分で調べたいときの案内先として使えます。説明後のセルフフォロー先として優秀です。",
+            tags: ["患者向け", "PMDA", "薬説明"]
+          },
+          {
+            name: "ぜんそく.jp",
+            url: "https://zensoku.jp/",
+            use: "喘息患者さんへの疾患教育やセルフモニタリング支援に使えます。ACTなど自己管理の話につなげやすいです。",
+            tags: ["患者向け", "喘息", "自己管理"]
+          }
+        ]
+      }
+    ];
+
+    const categoryGrid = document.getElementById("categoryGrid");
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilters = document.getElementById("categoryFilters");
+    const emptyState = document.getElementById("emptyState");
+
+    let currentFilter = "all";
+
+    function createFilters() {
+      const allBtn = document.createElement("button");
+      allBtn.className = "filter-btn active";
+      allBtn.dataset.filter = "all";
+      allBtn.textContent = "すべて";
+      categoryFilters.appendChild(allBtn);
+
+      categories.forEach((category) => {
+        const btn = document.createElement("button");
+        btn.className = "filter-btn";
+        btn.dataset.filter = category.id;
+        btn.textContent = category.key;
+        categoryFilters.appendChild(btn);
+      });
+
+      categoryFilters.addEventListener("click", (event) => {
+        const btn = event.target.closest(".filter-btn");
+        if (!btn) return;
+        currentFilter = btn.dataset.filter;
+        [...categoryFilters.querySelectorAll(".filter-btn")].forEach((item) => {
+          item.classList.toggle("active", item === btn);
+        });
+        applyFilters();
+      });
+    }
+
+    function renderCategories() {
+      categoryGrid.innerHTML = "";
+
+      categories.forEach((category) => {
+        const section = document.createElement("section");
+        section.className = "section-card";
+        section.id = category.id;
+        section.dataset.category = category.id;
+
+        const title = document.createElement("div");
+        title.className = "section-title";
+        title.innerHTML = `
+          <div>
+            <h3>${category.title}</h3>
+            <p>${category.description}</p>
+          </div>
+          <div class="section-badge">${category.items.length} sites</div>
+        `;
+
+        const grid = document.createElement("div");
+        grid.className = "sites-grid";
+
+        category.items.forEach((item) => {
+          const article = document.createElement("article");
+          article.className = "site-card";
+          article.dataset.search = [category.title, category.key, item.name, item.use, ...(item.tags || [])]
+            .join(" ")
+            .toLowerCase();
+
+          const tags = (item.tags || [])
+            .map((tag) => `<span class="tag">${tag}</span>`)
+            .join("");
+
+          article.innerHTML = `
+            <div class="site-top">
+              <h4 class="site-title">
+                <a class="site-link" href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a>
+              </h4>
+            </div>
+            <div class="tag-row">${tags}</div>
+            <p>${item.use}</p>
+          `;
+
+          grid.appendChild(article);
+        });
+
+        section.appendChild(title);
+        section.appendChild(grid);
+        categoryGrid.appendChild(section);
+      });
+    }
+
+    function applyFilters() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      let visibleSections = 0;
+      let visibleCards = 0;
+
+      document.querySelectorAll(".section-card").forEach((section) => {
+        const matchesCategory = currentFilter === "all" || section.dataset.category === currentFilter;
+        let sectionVisibleCards = 0;
+
+        section.querySelectorAll(".site-card").forEach((card) => {
+          const matchesKeyword = !keyword || card.dataset.search.includes(keyword);
+          const show = matchesCategory && matchesKeyword;
+          card.classList.toggle("hidden", !show);
+          if (show) {
+            sectionVisibleCards += 1;
+            visibleCards += 1;
+          }
+        });
+
+        const shouldShowSection = matchesCategory && sectionVisibleCards > 0;
+        section.classList.toggle("hidden", !shouldShowSection);
+        if (shouldShowSection) visibleSections += 1;
+      });
+
+      emptyState.style.display = visibleCards === 0 ? "block" : "none";
+    }
+
+    searchInput.addEventListener("input", applyFilters);
+
+    createFilters();
+    renderCategories();
+    applyFilters();
+  </script>
+</body>
+</html>
