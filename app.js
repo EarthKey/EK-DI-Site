@@ -399,6 +399,7 @@ const categoryGrid = document.getElementById("categoryGrid");
 const searchInput = document.getElementById("searchInput");
 const categoryFilters = document.getElementById("categoryFilters");
 const emptyState = document.getElementById("emptyState");
+const situationCards = document.querySelectorAll(".situation-card");
 
 let currentFilter = "all";
 
@@ -416,6 +417,12 @@ function createElement(tag, className, text) {
   if (className) el.className = className;
   if (text !== undefined) el.textContent = text;
   return el;
+}
+
+function syncActiveFilterButton() {
+  [...categoryFilters.querySelectorAll(".filter-btn")].forEach((item) => {
+    item.classList.toggle("active", item.dataset.filter === currentFilter);
+  });
 }
 
 function createFilters() {
@@ -441,6 +448,29 @@ function createFilters() {
       item.classList.toggle("active", item === btn);
     });
     applyFilters();
+  });
+}
+
+function activateSituation(targetId) {
+  currentFilter = targetId;
+  searchInput.value = "";
+  syncActiveFilterButton();
+  applyFilters();
+
+  const targetSection = document.getElementById(targetId);
+  if (targetSection) {
+    targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+function bindSituationCards() {
+  situationCards.forEach((card) => {
+    card.addEventListener("click", (event) => {
+      event.preventDefault();
+      const targetId = card.dataset.situationTarget;
+      if (!targetId) return;
+      activateSituation(targetId);
+    });
   });
 }
 
@@ -529,4 +559,5 @@ if (categoryGrid && searchInput && categoryFilters && emptyState) {
   createFilters();
   renderCategories();
   applyFilters();
+  bindSituationCards();
 }
