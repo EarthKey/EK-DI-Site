@@ -105,6 +105,14 @@
       gap: 14px;
     }
 
+    .brand-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      color: inherit;
+      text-decoration: none;
+    }
+
     .brand-mark {
       width: 48px;
       height: 48px;
@@ -116,6 +124,14 @@
       color: white;
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       box-shadow: 0 12px 32px rgba(16, 185, 129, 0.28);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      cursor: pointer;
+    }
+
+    .brand-home:hover .brand-mark {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 36px rgba(16, 185, 129, 0.34);
+      filter: saturate(1.08);
     }
 
     .brand-copy h1 {
@@ -216,6 +232,17 @@
       color: var(--muted);
     }
 
+    .section-note {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(148, 163, 184, 0.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
     .toolbar {
       padding: 10px 0 26px;
     }
@@ -226,39 +253,32 @@
 
     .controls {
       display: grid;
-      grid-template-columns: 1.1fr auto;
+      grid-template-columns: auto 1fr;
       gap: 16px;
-      align-items: start;
+      align-items: center;
       margin-top: 18px;
     }
 
     .search-box {
       position: relative;
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, rgba(236, 253, 245, 0.92), rgba(209, 250, 229, 0.86));
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
     }
 
     .search-box input {
-      width: 100%;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 18px;
-      padding: 17px 18px 17px 52px;
-      font-size: 1rem;
-      color: var(--text);
-      outline: none;
-    }
-
-    .search-box input:focus {
-      border-color: rgba(16, 185, 129, 0.4);
-      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
+      display: none;
     }
 
     .search-icon {
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 1rem;
+      color: var(--accent-3);
+      font-size: 1.1rem;
+      line-height: 1;
     }
 
     .filter-group {
@@ -270,21 +290,23 @@
 
     .filter-btn {
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.88);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(236, 253, 245, 0.92)),
+        linear-gradient(90deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.02));
       color: var(--muted);
       border-radius: 999px;
       padding: 11px 14px;
       font-size: 0.9rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.22s ease;
     }
 
     .filter-btn:hover,
     .filter-btn.active {
       color: white;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: linear-gradient(135deg, #34d399 0%, #10b981 32%, #059669 68%, #047857 100%);
       border-color: transparent;
-      box-shadow: 0 12px 24px rgba(16, 185, 129, 0.22);
+      box-shadow: 0 12px 24px rgba(16, 185, 129, 0.24);
     }
 
     .situation {
@@ -597,6 +619,16 @@
       color: rgba(236, 253, 245, 0.72);
     }
 
+    .meta-note a {
+      color: #a7f3d0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .meta-note a:hover {
+      color: #d1fae5;
+    }
+
     .disclaimer {
       margin-top: 18px;
       padding-top: 14px;
@@ -683,15 +715,17 @@
     }
   </style>
 </head>
-<body>
+<body id="top">
   <header class="topbar">
     <div class="shell topbar-inner">
       <div class="brand">
-        <div class="brand-mark">DI</div>
-        <div class="brand-copy">
-          <h1>DI Site Navigator</h1>
-          <p>薬剤師・医療従事者向け 実務インデックス</p>
-        </div>
+        <a class="brand-home" href="#top" aria-label="ページ上部へ戻る">
+          <div class="brand-mark">DI</div>
+          <div class="brand-copy">
+            <h1>DI Site Navigator</h1>
+            <p>薬剤師・医療従事者向け 実務インデックス</p>
+          </div>
+        </a>
       </div>
       <nav class="top-actions" aria-label="ページ内ナビゲーション">
         <a class="mini-link" href="#situation">状況ナビ</a>
@@ -722,9 +756,8 @@
           <p>サイト名、活用シーン、カテゴリ、タグで横断検索できます。時間を無駄にしないための入口です。</p>
         </div>
         <div class="controls">
-          <div class="search-box">
+          <div class="search-box" aria-hidden="true" title="検索アイコン">
             <span class="search-icon">⌕</span>
-            <input id="searchInput" type="search" placeholder="例：添付文書 / 授乳 / 供給 / PMDA / 腎機能">
           </div>
           <div class="filter-group" id="categoryFilters" aria-label="カテゴリ絞り込み"></div>
         </div>
@@ -737,7 +770,7 @@
     <section class="situation" id="situation" aria-labelledby="situation-title">
       <div class="section-head">
         <h3 id="situation-title">状況ナビ</h3>
-        <p>現場では「公的機関を見よう」とは考えません。「今すぐ添付文書が必要」「授乳で困る」と考えます。入口をそこに合わせています。</p>
+        <p class="section-note">現場では「公的機関を見よう」とは考えません。「今すぐ添付文書が必要」「授乳で困る」と考えます。入口をそこに合わせています。</p>
       </div>
       <div class="situation-grid">
         <a class="situation-card s1" href="#cat-primary" data-situation-target="cat-primary">
@@ -786,7 +819,7 @@
     <section class="flow" id="flow" aria-labelledby="flow-title">
       <div class="section-head">
         <h3 id="flow-title">使う順番の図解</h3>
-        <p>本当に使われるサイトは、リンクを並べるのではなく「この場面ではまずこれ」を示しています。</p>
+        <p class="section-note">本当に使われるサイトは、リンクを並べるのではなく「この場面ではまずこれ」を示しています。</p>
       </div>
       <div class="flow-grid">
         <article class="flow-card">
@@ -822,7 +855,7 @@
     <section class="map" id="map" aria-labelledby="map-title">
       <div class="section-head">
         <h3 id="map-title">カテゴリ一覧</h3>
-        <p>以下は「組織別」ではなく「現場で何に使うか」で再構成した一覧です。検索・絞り込みにも対応しています。</p>
+        <p class="section-note">以下は「組織別」ではなく「現場で何に使うか」で再構成した一覧です。検索・絞り込みにも対応しています。</p>
       </div>
       <div class="category-grid" id="categoryGrid"></div>
       <div class="summary" aria-label="使い方の要約">
@@ -860,7 +893,7 @@
       </div>
       <div class="disclaimer">
         <div>本サイトは情報提供を目的としており、医療・薬事上の判断を代替するものではありません。実際の治療・調剤判断は、必ず一次情報および担当医・薬剤師の判断に基づいてください。</div>
-        <div class="meta-note">最終リンク確認日：2026-04-20 / © 2026 EarthKey</div>
+        <div class="meta-note">最終リンク確認日：2026-04-20 / © 2026 EarthKey / <a href="https://earthkey-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer">公式LP</a></div>
       </div>
       <div class="footer-links">
         <a href="./terms.html">利用規約・免責事項</a>
